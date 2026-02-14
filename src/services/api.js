@@ -1,8 +1,24 @@
 import { API_ENDPOINTS } from '../config/settings';
 
 // ============================================
-// 🌸 API SERVICE - FULL VERSION
+// 🌸 API SERVICE - FULL VERSION WITH IMAGE FIX
 // ============================================
+
+// Helper function untuk fix image URL dengan CORS
+const fixImageUrl = (url) => {
+  if (!url) return null;
+  
+  // Kalau URL sudah lengkap, return
+  if (url.startsWith('http')) {
+    // Fix untuk i0.wp.com images
+    if (url.includes('i0.wp.com')) {
+      return url.replace('i0.wp.com/', '');
+    }
+    return url;
+  }
+  
+  return url;
+};
 
 class ApiService {
   constructor() {
@@ -35,7 +51,7 @@ class ApiService {
       }
 
       const result = await response.json();
-      console.log('✅ Response:', result);
+      console.log('✅ Response received');
       
       // Extract data from API response
       const data = result.data || result;
@@ -63,8 +79,8 @@ class ApiService {
         novels: novels.map(novel => ({
           slug: novel.slug,
           title: novel.title,
-          image: novel.poster,
-          poster: novel.poster,
+          image: fixImageUrl(novel.poster),
+          poster: fixImageUrl(novel.poster),
           type: novel.type,
           status: novel.status || 'Unknown',
           rating: novel.rating,
@@ -75,8 +91,8 @@ class ApiService {
         featured: novels.slice(0, 5).map(novel => ({
           slug: novel.slug,
           title: novel.title,
-          image: novel.poster,
-          poster: novel.poster,
+          image: fixImageUrl(novel.poster),
+          poster: fixImageUrl(novel.poster),
           type: novel.type,
           status: novel.status || 'Unknown',
           rating: novel.rating,
@@ -86,8 +102,8 @@ class ApiService {
         latest: novels.map(novel => ({
           slug: novel.slug,
           title: novel.title,
-          image: novel.poster,
-          poster: novel.poster,
+          image: fixImageUrl(novel.poster),
+          poster: fixImageUrl(novel.poster),
           type: novel.type,
           status: novel.status || 'Unknown',
           rating: novel.rating,
@@ -96,8 +112,8 @@ class ApiService {
         trending: novels.map(novel => ({
           slug: novel.slug,
           title: novel.title,
-          image: novel.poster,
-          poster: novel.poster,
+          image: fixImageUrl(novel.poster),
+          poster: fixImageUrl(novel.poster),
           type: novel.type,
           status: novel.status || 'Unknown',
           rating: novel.rating,
@@ -107,8 +123,8 @@ class ApiService {
         popular: novels.map(novel => ({
           slug: novel.slug,
           title: novel.title,
-          image: novel.poster,
-          poster: novel.poster,
+          image: fixImageUrl(novel.poster),
+          poster: fixImageUrl(novel.poster),
           type: novel.type,
           status: novel.status || 'Unknown',
           rating: novel.rating,
@@ -141,8 +157,8 @@ class ApiService {
         results: (data.results || []).map(novel => ({
           slug: novel.slug,
           title: novel.title,
-          image: novel.poster,
-          poster: novel.poster,
+          image: fixImageUrl(novel.poster),
+          poster: fixImageUrl(novel.poster),
           type: novel.type,
           status: novel.status || 'Unknown',
           rating: novel.rating
@@ -164,8 +180,8 @@ class ApiService {
         slug: data.slug,
         title: data.title,
         alternativeTitle: data.alt_title,
-        image: data.poster,
-        poster: data.poster,
+        image: fixImageUrl(data.poster),
+        poster: fixImageUrl(data.poster),
         synopsis: data.synopsis || 'Sinopsis tidak tersedia',
         status: data.status || 'Unknown',
         type: data.type,
@@ -247,8 +263,8 @@ class ApiService {
         novels: (data.results || []).map(novel => ({
           slug: novel.slug,
           title: novel.title,
-          image: novel.poster,
-          poster: novel.poster,
+          image: fixImageUrl(novel.poster),
+          poster: fixImageUrl(novel.poster),
           type: novel.type,
           status: novel.status || 'Unknown',
           rating: novel.rating
@@ -296,8 +312,8 @@ class ApiService {
         novels: (data.results || []).map(novel => ({
           slug: novel.slug,
           title: novel.title,
-          image: novel.poster,
-          poster: novel.poster,
+          image: fixImageUrl(novel.poster),
+          poster: fixImageUrl(novel.poster),
           type: novel.type,
           status: novel.status || 'Unknown',
           rating: novel.rating
@@ -322,8 +338,8 @@ class ApiService {
           title: n.title,
           slug: n.slug,
           type: n.type,
-          poster: n.poster || `https://placehold.co/300x450/ff69b4/white?text=${encodeURIComponent(n.title.substring(0, 20))}`,
-          image: n.poster || `https://placehold.co/300x450/ff69b4/white?text=${encodeURIComponent(n.title.substring(0, 20))}`,
+          poster: fixImageUrl(n.poster) || `https://placehold.co/300x450/ff69b4/white?text=${encodeURIComponent(n.title.substring(0, 20))}`,
+          image: fixImageUrl(n.poster) || `https://placehold.co/300x450/ff69b4/white?text=${encodeURIComponent(n.title.substring(0, 20))}`,
           letter_group: n.letter_group
         })),
         total: novelsList.length || 0
