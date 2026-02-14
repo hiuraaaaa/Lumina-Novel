@@ -5,7 +5,6 @@ import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import Preloader from './components/layout/Preloader';
 import ScrollToTop from './components/common/ScrollToTop';
-import SakuraPetals from './components/layout/SakuraPetals';
 import HomePage from './pages/HomePage';
 import DetailPage from './pages/DetailPage';
 import ReadPage from './pages/ReadPage';
@@ -23,6 +22,7 @@ function App() {
 
   // Navigation handler
   const handleNavigate = (page, data = {}) => {
+    console.log('Navigate to:', page, data);
     setCurrentPage(page);
     setPageData(data);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -30,11 +30,14 @@ function App() {
 
   // Novel click handler
   const handleNovelClick = (novel) => {
-    handleNavigate('detail', { novelSlug: novel.slug || novel });
+    console.log('Novel clicked:', novel);
+    const slug = novel.slug || novel;
+    handleNavigate('detail', { novelSlug: slug });
   };
 
   // Chapter click handler
   const handleChapterClick = (novel, chapter) => {
+    console.log('Chapter clicked:', novel, chapter);
     handleNavigate('read', {
       novel,
       chapterSlug: chapter.slug || chapter
@@ -43,11 +46,14 @@ function App() {
 
   // Search handler
   const handleSearch = (query) => {
+    console.log('Search:', query);
     handleNavigate('search', { query });
   };
 
   // Render current page
   const renderPage = () => {
+    console.log('Rendering page:', currentPage, pageData);
+
     switch (currentPage) {
       case 'home':
         return (
@@ -58,6 +64,10 @@ function App() {
         );
 
       case 'detail':
+        if (!pageData.novelSlug) {
+          console.warn('No novelSlug provided, redirecting to home');
+          return <HomePage onNavigate={handleNavigate} onNovelClick={handleNovelClick} />;
+        }
         return (
           <DetailPage
             novelSlug={pageData.novelSlug}
@@ -68,6 +78,10 @@ function App() {
         );
 
       case 'read':
+        if (!pageData.novel || !pageData.chapterSlug) {
+          console.warn('Missing novel or chapter data, redirecting to home');
+          return <HomePage onNavigate={handleNavigate} onNovelClick={handleNovelClick} />;
+        }
         return (
           <ReadPage
             novel={pageData.novel}
@@ -98,6 +112,9 @@ function App() {
         );
 
       case 'genre':
+        if (!pageData.genreSlug) {
+          return <GenresPage onGenreClick={(genre) => handleNavigate('genre', { genreSlug: genre.slug || genre })} />;
+        }
         return (
           <GenrePage
             genreSlug={pageData.genreSlug}
@@ -122,6 +139,7 @@ function App() {
         );
 
       default:
+        console.warn('Unknown page:', currentPage);
         return (
           <HomePage
             onNavigate={handleNavigate}
@@ -140,9 +158,6 @@ function App() {
     <ReadingProvider>
       <BookmarkProvider>
         <div className="min-h-screen flex flex-col bg-white">
-          {/* Decorative Petals */}
-          <SakuraPetals count={5} />
-
           {/* Header - Hide on reading page */}
           {currentPage !== 'read' && (
             <Header
